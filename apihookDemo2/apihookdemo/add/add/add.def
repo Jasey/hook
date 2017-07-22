@@ -1,0 +1,4 @@
+LIBRARY  Add
+DESCRIPTION "ADD LA"
+EXPORTS
+ add  @1;

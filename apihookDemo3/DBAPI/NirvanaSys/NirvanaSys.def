@@ -1,0 +1,7 @@
+; NirvanaSys.def : Declares the module parameters for the DLL.
+
+LIBRARY      "NirvanaSys"
+DESCRIPTION  'NirvanaSys Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here

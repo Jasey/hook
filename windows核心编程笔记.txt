@@ -1,0 +1,14 @@
+1、什么是用户模式，什么是内核模式
+2、什么情况下会在用户模式和内核模式切换
+2、为什么用户模式和内核模式切换开销很大，不同线程之间切换开销如何，这个开销和用户内核模式切换开销比较如何？
+
+本地注入1：http://blog.csdn.net/glliuxueke/article/details/2702608
+
+
+本地注入2：http://blog.csdn.net/friendan/article/details/12222651
+
+windows 核心编程：http://blog.csdn.net/column/details/windowsbyiter.html
+
+远程注入技术：http://blog.csdn.net/chenyujing1234/article/details/7861092
+
+创建windows桌面应用教程：http://blog.csdn.net/u011583927/article/details/54896961
