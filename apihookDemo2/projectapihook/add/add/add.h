@@ -1,1 +1,0 @@
-extern "C" _declspec(dllexport) int WINAPI add(int a,int b);
