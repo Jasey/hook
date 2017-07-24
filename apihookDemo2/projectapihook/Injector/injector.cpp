@@ -82,11 +82,8 @@ BOOL CreateRemoteDll(const char *DllFullPath, const DWORD dwRemoteProcessId)
 
 
 
-void Hook(int dwPid)
+void Hook(int dwPid, char* curpath)
 { 
-	char curpath[260];
-	printf("输入dll路径:\n");
-	scanf("%s",&curpath);
 
 	if(CreateRemoteDll(curpath,dwPid))
 		printf("启动成功\n");
@@ -100,7 +97,10 @@ int main(int argc, char* argv[])
 	int pid;
 	printf("输入进程pid\n");
 	scanf("%d",&pid);
-	Hook(pid);
+	char curpath[260];
+	printf("输入dll路径:\n");
+	scanf("%s",&curpath);
+	Hook(pid, curpath);
 	getchar();
 	return 0;
 }

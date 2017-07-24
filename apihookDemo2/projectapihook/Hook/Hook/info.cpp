@@ -34,3 +34,23 @@ int RcLogInfo::WriteLogInfo(const char *pInfo)
 
     
 }
+
+bool RcLogInfo::openFile(const char * filename){
+
+	//获取宿主进程所在路径
+	char filepath[MAX_PATH];
+	GetModuleFileName(NULL,filepath,MAX_PATH);
+	*strrchr(filepath,'\\') = '\0';
+	strcat(filepath,filename);
+	//初始化日志文件
+    FILE *m_file = fopen(filepath,"at+");	
+    if(NULL == m_file)
+    {
+        return false;
+    }
+    m_pfLogFile = m_file;
+
+}	
+bool RcLogInfo::closeFile(){
+	return fclose(m_pfLogFile);
+}
