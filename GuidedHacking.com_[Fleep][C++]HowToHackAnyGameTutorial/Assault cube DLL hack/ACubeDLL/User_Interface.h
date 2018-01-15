@@ -39,7 +39,7 @@ namespace ACubeDLL
 	bool AmmoStatus; // used to DEFine wether ammo is on or not
 	char AmmoOpCode[] = "\xFF\x06";
 	char AmmoDefaultOpCode[] = "\xFF\x0E";
-	DWORD AmmoAddress = 0x45B75F; 
+	DWORD AmmoAddress = 0X0279A5A8; 
 
 
 	//-------HEALTH VARS--------

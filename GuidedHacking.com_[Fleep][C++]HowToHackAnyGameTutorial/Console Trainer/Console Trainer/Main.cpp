@@ -20,13 +20,13 @@ bool UpdateOnNextRun; //used to update the display menu only when something chan
 //number we are going to overwrite the current ammo with in bytes
 bool AmmoStatus; // used to DEFine wether ammo is on or not
 BYTE AmmoValue[] = {0xA3,0x1C,0x0,0x0}; 
-DWORD AmmoBaseAddress = {0x004DF73C}; 
+DWORD AmmoBaseAddress = {0x00509B74}; 
 DWORD AmmoOffsets[] = {0x378, 0x14, 0x0}; //3 LEVEL pointer
 
 //-------HEALTH VARS--------
 bool HealthStatus; // used to DEFine wether ammo is on or not
 BYTE HealthValue[] ={0x39,0x5,0x0,0x0}; 
-DWORD HealthBaseAddress = {0x004DF73C};
+DWORD HealthBaseAddress = {0x00509B74};
 DWORD HealthOffsets[] = {0xF4}; // 1 level pointer
 
 int main() 
