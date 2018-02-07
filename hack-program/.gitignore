@@ -1,0 +1,10 @@
+*.mdb
+*.ldb
+*.sln
+*.config
+*.suo
+*.htm
+
+Debug/
+Release/
+obj/
