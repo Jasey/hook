@@ -59,10 +59,14 @@ int  ApiHook(char *DllName,//DLL文件名
 	while(pThunk->u1.Function)
 	{
 		lpAddr = (INT64*)&(pThunk->u1.Function);
+
+		wsprintf(LogMessage, "enter address : 0x%I64X, it's content : 0x%I64X\n", lpAddr, *lpAddr);
+		OutputDebugString (LogMessage);
+
 		//比较函数地址是否相同
 		if(*lpAddr == (INT64)OldFunAddr)
 		{	
-			wsprintf(LogMessage, "Find the TerminateProcess function enter address : 0x%X, it's content : 0x%X\n", lpAddr, *lpAddr);
+			wsprintf(LogMessage, "Find the TerminateProcess function enter address : 0x%I64X, it's content : 0x%I64X\n", lpAddr, *lpAddr);
 			OutputDebugString (LogMessage);
 			DWORD dwOldProtect;
 			//修改内存包含属性
