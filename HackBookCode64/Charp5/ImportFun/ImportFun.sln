@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImportFun", "ImportFun.vcproj", "{992B27FA-B9E1-41DD-97AC-A094D59E8B6A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleHook", "..\SimpleHook\SimpleHook.vcproj", "{4CE41A82-DE1A-4B1D-9ED3-B486D6E59424}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectSimpleHook", "..\InjectSimpleHook\InjectSimpleHook.vcproj", "{137CF808-089B-4FCA-A4B0-CFC437CC9657}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{992B27FA-B9E1-41DD-97AC-A094D59E8B6A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{992B27FA-B9E1-41DD-97AC-A094D59E8B6A}.Debug|Win32.Build.0 = Debug|Win32
+		{992B27FA-B9E1-41DD-97AC-A094D59E8B6A}.Release|Win32.ActiveCfg = Release|Win32
+		{992B27FA-B9E1-41DD-97AC-A094D59E8B6A}.Release|Win32.Build.0 = Release|Win32
+		{4CE41A82-DE1A-4B1D-9ED3-B486D6E59424}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4CE41A82-DE1A-4B1D-9ED3-B486D6E59424}.Debug|Win32.Build.0 = Debug|Win32
+		{4CE41A82-DE1A-4B1D-9ED3-B486D6E59424}.Release|Win32.ActiveCfg = Release|Win32
+		{4CE41A82-DE1A-4B1D-9ED3-B486D6E59424}.Release|Win32.Build.0 = Release|Win32
+		{137CF808-089B-4FCA-A4B0-CFC437CC9657}.Debug|Win32.ActiveCfg = Debug|Win32
+		{137CF808-089B-4FCA-A4B0-CFC437CC9657}.Debug|Win32.Build.0 = Debug|Win32
+		{137CF808-089B-4FCA-A4B0-CFC437CC9657}.Release|Win32.ActiveCfg = Release|Win32
+		{137CF808-089B-4FCA-A4B0-CFC437CC9657}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
